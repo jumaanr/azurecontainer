@@ -1,0 +1,396 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualNetworks_vnet_rg_test_containerplatform_name": {
+            "defaultValue": "vnet-rg-test-containerplatform",
+            "type": "String"
+        },
+        "virtualMachines_vm001_ubuntu_rg_test_containerplatform_name": {
+            "defaultValue": "vm001-ubuntu-rg-test-containerplatform",
+            "type": "String"
+        },
+        "sshPublicKeys_key_vm001_ubuntu_rg_test_containerplatform_name": {
+            "defaultValue": "key-vm001-ubuntu-rg-test-containerplatform",
+            "type": "String"
+        },
+        "networkInterfaces_vm001_ubuntu_rg_test_containerplatform782_name": {
+            "defaultValue": "vm001-ubuntu-rg-test-containerplatform782",
+            "type": "String"
+        },
+        "publicIPAddresses_pubip_vm001_ubuntu_rg_test_containerplatform_name": {
+            "defaultValue": "pubip-vm001-ubuntu-rg-test-containerplatform",
+            "type": "String"
+        },
+        "networkSecurityGroups_vm001_ubuntu_rg_test_containerplatform_nsg_name": {
+            "defaultValue": "vm001-ubuntu-rg-test-containerplatform-nsg",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Compute/sshPublicKeys",
+            "apiVersion": "2023-03-01",
+            "name": "[parameters('sshPublicKeys_key_vm001_ubuntu_rg_test_containerplatform_name')]",
+            "location": "eastus",
+            "tags": {
+                "env": "test",
+                "lab": "devops"
+            },
+            "properties": {
+                "publicKey": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDID4XTQ9wfF2u85EdzKO5U4Q9DnEmaTh2T0An9yQ+g/kYn4lVozAsTVj56xobfjkVM08vsR8dY2lXviWo9uDpP041fjL8Bx/4lZYK4A8BO/3TAvPIf+Vqclsww8r7tfyN2iczN1dbJrjUXBCjuHQd/icXHsk02ZBfryr/1jr3/5qGwrv8Iom+zqz9apPPlAqOJoYCghWKmUkLny42ldBgTTPOM81VfUyiAh19LlY+Ao/h+nYNgehM6ose3ho0SMq7hoaIVaAUbFOjWMLtYflCNaH2kQDTT0E8cPcZFNPcFp2Hq1G1FW5hCVS25XQbbtY2nLsGqY2aOf7d/IJKrruOjGD7UqqlclzyLOu6S9CLcCBv6H1dNX99JP30VyZxKZ+ou8NtPiim3wHxliEZ00NDl5ymaArLvvR4qvMjFTQ9UHEKSCM4cRSIqWLjqxXvhpJsbh7hIHrUC8qHQPV+SVU7CBagr+bXirJpewR9mA4CoR7YxOjU98VH/Vq354SnCbd0= generated-by-azure"
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2022-11-01",
+            "name": "[parameters('networkSecurityGroups_vm001_ubuntu_rg_test_containerplatform_nsg_name')]",
+            "location": "eastus",
+            "tags": {
+                "env": "test",
+                "lab": "devops"
+            },
+            "properties": {
+                "securityRules": [
+                    {
+                        "name": "SSH",
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vm001_ubuntu_rg_test_containerplatform_nsg_name'), 'SSH')]",
+                        "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 300,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "HTTP",
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vm001_ubuntu_rg_test_containerplatform_nsg_name'), 'HTTP')]",
+                        "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "80",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 320,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    },
+                    {
+                        "name": "HTTPS",
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups/securityRules', parameters('networkSecurityGroups_vm001_ubuntu_rg_test_containerplatform_nsg_name'), 'HTTPS')]",
+                        "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+                        "properties": {
+                            "protocol": "TCP",
+                            "sourcePortRange": "*",
+                            "destinationPortRange": "443",
+                            "sourceAddressPrefix": "*",
+                            "destinationAddressPrefix": "*",
+                            "access": "Allow",
+                            "priority": 340,
+                            "direction": "Inbound",
+                            "sourcePortRanges": [],
+                            "destinationPortRanges": [],
+                            "sourceAddressPrefixes": [],
+                            "destinationAddressPrefixes": []
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Network/publicIPAddresses",
+            "apiVersion": "2022-11-01",
+            "name": "[parameters('publicIPAddresses_pubip_vm001_ubuntu_rg_test_containerplatform_name')]",
+            "location": "eastus",
+            "tags": {
+                "env": "test",
+                "lab": "devops"
+            },
+            "sku": {
+                "name": "Standard",
+                "tier": "Regional"
+            },
+            "properties": {
+                "ipAddress": "172.173.183.227",
+                "publicIPAddressVersion": "IPv4",
+                "publicIPAllocationMethod": "Static",
+                "idleTimeoutInMinutes": 4,
+                "ipTags": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks",
+            "apiVersion": "2022-11-01",
+            "name": "[parameters('virtualNetworks_vnet_rg_test_containerplatform_name')]",
+            "location": "eastus",
+            "tags": {
+                "env": "test",
+                "lab": "devops"
+            },
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "containersubnet",
+                        "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_rg_test_containerplatform_name'), 'containersubnet')]",
+                        "properties": {
+                            "addressPrefix": "10.0.0.0/24",
+                            "delegations": [],
+                            "privateEndpointNetworkPolicies": "Disabled",
+                            "privateLinkServiceNetworkPolicies": "Enabled"
+                        },
+                        "type": "Microsoft.Network/virtualNetworks/subnets"
+                    }
+                ],
+                "virtualNetworkPeerings": [],
+                "enableDdosProtection": false
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2023-03-01",
+            "name": "[parameters('virtualMachines_vm001_ubuntu_rg_test_containerplatform_name')]",
+            "location": "eastus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_vm001_ubuntu_rg_test_containerplatform782_name'))]"
+            ],
+            "tags": {
+                "env": "test",
+                "lab": "devops"
+            },
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_DC1ds_v3"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "canonical",
+                        "offer": "0001-com-ubuntu-server-focal",
+                        "sku": "20_04-lts-gen2",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Linux",
+                        "name": "[concat(parameters('virtualMachines_vm001_ubuntu_rg_test_containerplatform_name'), '_OsDisk_1_13d8b83a13da4369a9c3dc85fff137a9')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "storageAccountType": "StandardSSD_LRS",
+                            "id": "[resourceId('Microsoft.Compute/disks', concat(parameters('virtualMachines_vm001_ubuntu_rg_test_containerplatform_name'), '_OsDisk_1_13d8b83a13da4369a9c3dc85fff137a9'))]"
+                        },
+                        "deleteOption": "Delete",
+                        "diskSizeGB": 30
+                    },
+                    "dataDisks": [],
+                    "diskControllerType": "SCSI"
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_vm001_ubuntu_rg_test_containerplatform_name')]",
+                    "adminUsername": "devopsadmin",
+                    "linuxConfiguration": {
+                        "disablePasswordAuthentication": true,
+                        "ssh": {
+                            "publicKeys": [
+                                {
+                                    "path": "/home/devopsadmin/.ssh/authorized_keys",
+                                    "keyData": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDID4XTQ9wfF2u85EdzKO5U4Q9DnEmaTh2T0An9yQ+g/kYn4lVozAsTVj56xobfjkVM08vsR8dY2lXviWo9uDpP041fjL8Bx/4lZYK4A8BO/3TAvPIf+Vqclsww8r7tfyN2iczN1dbJrjUXBCjuHQd/icXHsk02ZBfryr/1jr3/5qGwrv8Iom+zqz9apPPlAqOJoYCghWKmUkLny42ldBgTTPOM81VfUyiAh19LlY+Ao/h+nYNgehM6ose3ho0SMq7hoaIVaAUbFOjWMLtYflCNaH2kQDTT0E8cPcZFNPcFp2Hq1G1FW5hCVS25XQbbtY2nLsGqY2aOf7d/IJKrruOjGD7UqqlclzyLOu6S9CLcCBv6H1dNX99JP30VyZxKZ+ou8NtPiim3wHxliEZ00NDl5ymaArLvvR4qvMjFTQ9UHEKSCM4cRSIqWLjqxXvhpJsbh7hIHrUC8qHQPV+SVU7CBagr+bXirJpewR9mA4CoR7YxOjU98VH/Vq354SnCbd0= generated-by-azure"
+                                }
+                            ]
+                        },
+                        "provisionVMAgent": true,
+                        "patchSettings": {
+                            "patchMode": "ImageDefault",
+                            "assessmentMode": "ImageDefault"
+                        },
+                        "enableVMAgentPlatformUpdates": false
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true,
+                    "requireGuestProvisionSignal": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_vm001_ubuntu_rg_test_containerplatform782_name'))]",
+                            "properties": {
+                                "deleteOption": "Delete"
+                            }
+                        }
+                    ]
+                },
+                "priority": "Spot",
+                "evictionPolicy": "Deallocate",
+                "billingProfile": {
+                    "maxPrice": -1
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2022-11-01",
+            "name": "[concat(parameters('networkSecurityGroups_vm001_ubuntu_rg_test_containerplatform_nsg_name'), '/HTTP')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vm001_ubuntu_rg_test_containerplatform_nsg_name'))]"
+            ],
+            "properties": {
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "80",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 320,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2022-11-01",
+            "name": "[concat(parameters('networkSecurityGroups_vm001_ubuntu_rg_test_containerplatform_nsg_name'), '/HTTPS')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vm001_ubuntu_rg_test_containerplatform_nsg_name'))]"
+            ],
+            "properties": {
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "443",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 340,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkSecurityGroups/securityRules",
+            "apiVersion": "2022-11-01",
+            "name": "[concat(parameters('networkSecurityGroups_vm001_ubuntu_rg_test_containerplatform_nsg_name'), '/SSH')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vm001_ubuntu_rg_test_containerplatform_nsg_name'))]"
+            ],
+            "properties": {
+                "protocol": "TCP",
+                "sourcePortRange": "*",
+                "destinationPortRange": "22",
+                "sourceAddressPrefix": "*",
+                "destinationAddressPrefix": "*",
+                "access": "Allow",
+                "priority": 300,
+                "direction": "Inbound",
+                "sourcePortRanges": [],
+                "destinationPortRanges": [],
+                "sourceAddressPrefixes": [],
+                "destinationAddressPrefixes": []
+            }
+        },
+        {
+            "type": "Microsoft.Network/virtualNetworks/subnets",
+            "apiVersion": "2022-11-01",
+            "name": "[concat(parameters('virtualNetworks_vnet_rg_test_containerplatform_name'), '/containersubnet')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vnet_rg_test_containerplatform_name'))]"
+            ],
+            "properties": {
+                "addressPrefix": "10.0.0.0/24",
+                "delegations": [],
+                "privateEndpointNetworkPolicies": "Disabled",
+                "privateLinkServiceNetworkPolicies": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2022-11-01",
+            "name": "[parameters('networkInterfaces_vm001_ubuntu_rg_test_containerplatform782_name')]",
+            "location": "eastus",
+            "dependsOn": [
+                "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_pubip_vm001_ubuntu_rg_test_containerplatform_name'))]",
+                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_rg_test_containerplatform_name'), 'containersubnet')]",
+                "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vm001_ubuntu_rg_test_containerplatform_nsg_name'))]"
+            ],
+            "tags": {
+                "env": "test",
+                "lab": "devops"
+            },
+            "kind": "Regular",
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_vm001_ubuntu_rg_test_containerplatform782_name')), '/ipConfigurations/ipconfig1')]",
+                        "etag": "W/\"eb720e01-e062-4ebc-8f70-623e21ee47c1\"",
+                        "type": "Microsoft.Network/networkInterfaces/ipConfigurations",
+                        "properties": {
+                            "provisioningState": "Succeeded",
+                            "privateIPAddress": "10.0.0.4",
+                            "privateIPAllocationMethod": "Dynamic",
+                            "publicIPAddress": {
+                                "name": "pubip-vm001-ubuntu-rg-test-containerplatform",
+                                "id": "[resourceId('Microsoft.Network/publicIPAddresses', parameters('publicIPAddresses_pubip_vm001_ubuntu_rg_test_containerplatform_name'))]",
+                                "properties": {
+                                    "provisioningState": "Succeeded",
+                                    "resourceGuid": "ea6c8f4f-34bb-4129-9e39-adcc147797c5",
+                                    "publicIPAddressVersion": "IPv4",
+                                    "publicIPAllocationMethod": "Dynamic",
+                                    "idleTimeoutInMinutes": 4,
+                                    "ipTags": [],
+                                    "ipConfiguration": {
+                                        "id": "[concat(resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaces_vm001_ubuntu_rg_test_containerplatform782_name')), '/ipConfigurations/ipconfig1')]"
+                                    },
+                                    "deleteOption": "Delete"
+                                },
+                                "type": "Microsoft.Network/publicIPAddresses",
+                                "sku": {
+                                    "name": "Basic",
+                                    "tier": "Regional"
+                                }
+                            },
+                            "subnet": {
+                                "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('virtualNetworks_vnet_rg_test_containerplatform_name'), 'containersubnet')]"
+                            },
+                            "primary": true,
+                            "privateIPAddressVersion": "IPv4"
+                        }
+                    }
+                ],
+                "dnsSettings": {
+                    "dnsServers": []
+                },
+                "enableAcceleratedNetworking": true,
+                "enableIPForwarding": false,
+                "disableTcpStateTracking": false,
+                "networkSecurityGroup": {
+                    "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('networkSecurityGroups_vm001_ubuntu_rg_test_containerplatform_nsg_name'))]"
+                },
+                "nicType": "Standard"
+            }
+        }
+    ]
+}
