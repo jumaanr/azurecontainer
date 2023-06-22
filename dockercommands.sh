@@ -113,6 +113,14 @@ docker inspect blissful_hopper # under config section you can see 'ENV' configur
 #----Commands vs Entrypoints-#
 docker  run  --entry-point   sleep2.0   ubuntu-sleeper 10 #overried the command at startup, here ENTRYPOINT ["sleep"] but we want to change it during runtime as sleep2.0
 
+#---------- Docker Compose -----------------------
+docker compose up #create and start containers
+
+#----------Linking two contianers together----------
+
+$ docker run -d --name=vote -p 5000:80   --link  nameofContainer:nameofHost   voting-app  #
+
+#link is a command line option which can be used to link two containers together
 
 
 

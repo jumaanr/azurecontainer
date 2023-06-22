@@ -1,2 +1,29 @@
+version: '3'
 services:
-  
+  redis:
+    image: redis
+
+  db:
+    image: postgres:9.4
+
+  vote:
+  #run a docker build instead of trying to pull the image from docker registry
+  #in this specified location of the directory, contains application code and dockerfile with instructions to build the docker image
+    build: ./vote
+    ports:
+      - 5000:80
+    links:
+      - redis
+
+  result:
+    build: ./result
+    ports:
+      - 5001:80
+    links:
+      - db
+
+  worker:
+    build: ./worker
+    links:
+      - reids
+      - db
