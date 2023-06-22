@@ -9,4 +9,6 @@ The voting app consist of following architectural requirements
 	- counted votes saved in persistent database called 'db' built in PostgreSQL
     - Finally the results are output from result-app which is built in NodeJs
 
+Referenced project : https://github.com/dockersamples/example-voting-app
+
 ![Voting Application High Level architecture](VotingApplication/votingapplication.jpg)
