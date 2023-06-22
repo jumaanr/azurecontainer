@@ -93,12 +93,25 @@ docker logs blissful_hopper
 #--------- Building Custom Docker Images using Docker File -------------#
 docker build Dockerfile -t mummshad/my-custom-app  #build your own image using Dockerfile , -t for tag name | this will create an image locally in your system
 docker build . #see the various steps involved and the result of each task
+$ docker build -t webapp-color . #At the end of the command, we used the "." (dot) symbol which indicates for the current directory, so you need to run this command from within the directory that has the Dockerfile.
 
 docker login #login to your user account before you publish
 docker push mummshad/my-custom-app  #make it available in public docker registry, <accountName>/<ImageName>
+#Alpine images are in general smaller images
 
 
+docker run -p 8282:8080 webapp-color
+docker run python:3.6 cat /etc/*release*
 
+#------- ENV variables--------#
+docker run -e APP_COLOR=blue simple-webapp-color
+# you can pass a value to an environment vairable like above
+
+# to check if a docker image configured with an enviornment varaible
+docker inspect blissful_hopper # under config section you can see 'ENV' configured
+
+#----Commands vs Entrypoints-#
+docker  run  --entry-point   sleep2.0   ubuntu-sleeper 10 #overried the command at startup, here ENTRYPOINT ["sleep"] but we want to change it during runtime as sleep2.0
 
 
 

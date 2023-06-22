@@ -17,3 +17,6 @@ FLASK_APP=app.py flask run --host=0.0.0.0
 http://<IP>:5000                            => Welcome
 http://<IP>:5000/how%20are%20you            => I am good, how about you?
 # Lets consolidate this into a docker container image
+
+
+docker images

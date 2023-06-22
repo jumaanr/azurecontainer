@@ -21,3 +21,8 @@ COPY . /opt/source-code
 #ENTRYPOINT allows to specify a command that will be run when the image run as a container
 ENTRYPOINT FLASK_APP=/opt/source-code/app.py flask run
 
+#Execute a command, you can also have following syntax
+# CMD command param1  ,  example : CMD sleep 5
+CMD [ "command","parameter" ]
+
+
