@@ -67,6 +67,8 @@ docker rmi ImageName # remove an image that no longer plan to use, ensure no con
 docker rmi $(docker images -aq) #remove all images
 docker pull ImageName # Only download/pull the image
 
+docker history ImageName #show how the image is build and sizes
+
 #--------- Docker Run -------------#
 
 # Run-STDIN interactively input standard input
@@ -75,7 +77,28 @@ docker run -it kodekloud/simple-prompt-docker
 
 # Port Mapping 
 docker run -p <externalPort_hostEnd>:<internalPort_containerEnd>  kodekloud/webapp # externalPort_hostEnd this is port users access calling docker host's IP address
-docker run -p 80:5000 kodekloud/webapp
+docker run -p 80:5000 kodekloud/webapp #you cannot map to the same port more than once
+
+#Volume Mapping
+docker run -v <directory_dockerHost>:<directory_insideContainer>  mysql #This method helps to persist data
+docker run -v /opt/datadir:/var/lib/mysql mysql 
+
+#---- Get comprehensive information about a container--------
+docker inspect <containerName|containerID> # Returns all details in json format , state, mounts, config and network settings
+docker inspect blissful_hopper
+
+docker logs <containerName|containerID> #get logs of a container that ran in background
+docker logs blissful_hopper
+
+#--------- Building Custom Docker Images using Docker File -------------#
+docker build Dockerfile -t mummshad/my-custom-app  #build your own image using Dockerfile , -t for tag name | this will create an image locally in your system
+docker build . #see the various steps involved and the result of each task
+
+docker login #login to your user account before you publish
+docker push mummshad/my-custom-app  #make it available in public docker registry, <accountName>/<ImageName>
+
+
+
 
 
 
