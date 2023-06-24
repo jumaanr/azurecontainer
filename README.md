@@ -12,3 +12,4 @@ The voting app consist of following architectural requirements
 Referenced project : https://github.com/dockersamples/example-voting-app
 
 ![Voting Application High Level architecture](VotingApplication/votingapplication.jpg)
+

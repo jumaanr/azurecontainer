@@ -34,6 +34,12 @@ docker run nginx    #runs an docker nginx container, if the image is not availab
 docker run  --name webapp nginx:1.14-alpine  # define a custom name for container
 docker run redis:4.0  #specify a tag which is a specific version of redis image, if not specified the default tag = latest applied
 
+#Run a container in a remote docker host/engine
+docker -H=10.123.2.1:2375 run nginx #using IP 
+#TCP port 2375 is commonly used for communication with the Docker Remote API. 
+#The Docker Remote API provides an interface for interacting with the Docker daemon (Docker Engine) programmatically over HTTP.
+docker -H=remote-docker-engine:2375 run nginx #using hostname 
+
 docker ps           #list all the running containers and basic information about them, container ID and name is shown
 docker ps -a        # show all running, stopped, terminated(Exited) containers
 docker ps -aq       #list only container ids
@@ -92,6 +98,8 @@ docker logs blissful_hopper
 
 #--------- Building Custom Docker Images using Docker File -------------#
 docker build Dockerfile -t mummshad/my-custom-app  #build your own image using Dockerfile , -t for tag name | this will create an image locally in your system
+docker build Dockerfile2 -t mummshad/my-custom-app2
+
 docker build . #see the various steps involved and the result of each task
 $ docker build -t webapp-color . #At the end of the command, we used the "." (dot) symbol which indicates for the current directory, so you need to run this command from within the directory that has the Dockerfile.
 
@@ -115,6 +123,7 @@ docker  run  --entry-point   sleep2.0   ubuntu-sleeper 10 #overried the command 
 
 #---------- Docker Compose -----------------------
 docker compose up #create and start containers
+docker-compose up -d  #run on detach modes
 
 #Installing Docker Compose : https://docs.docker.com/compose/
 # Docker compose commands : https://docs.docker.com/engine/reference/commandline/compose/
@@ -131,6 +140,71 @@ docker-compose --version
 $ docker run -d --name=vote -p 5000:80   --link  nameofContainer:nameofHost   voting-app  #
 
 #link is a command line option which can be used to link two containers together
+
+#----------- Docker Engine : Resources and Namespaces----------------#
+docker run --cpu=.5 ubuntu #not more than 50% of the CPU used by contianer at a given time.
+docker run --memory=100m ubuntu # not more than 50% memory of the System Physical Memory used by container at a given time.
+
+#----------- Docker Storage -----------------------#
+#Createa a volume, creates a folder under /var/lib/docker/volumes directory of the docker host
+docker volume create data_volume
+# mount the docker volume inside the docker container , syntax -v <hostEndDirectory>:<ContainerEndDirectory>
+docker run -v data_volume:/var/lib/mysql mysql
+#Even if you didn’t create data_volume  volume before running the container , docker will automatically create a volume with the specified name and mount it to the container.  This called volume mounting
+docker run -v /data/mysql:/var/lib/mysql mysql # mount a volume from different location other than /var/lib/docker/volumes, aka bind mounting
+#More comprehensive bind mounting,preferred way
+docker run --mount type=bind,source=/data/mysql,target=/var/lib/mysql mysql
+
+#Question :What directory under /var/lib/docker are the files related to the container alpine-3 image stored?
+#Answer: The directory name is the same as the container id.
+#Here an example binding of mysql database instance , where /opt/data directory is at host end
+docker run -v /opt/data:/var/lib/mysql -d --name=mysql-db -e MYSQL_ROOT_PASSWORD=db_pass123 mysql
+
+#------------ Docker Network -----------------------#
+#docker has 3 networks : bridge (private internal netwok created by docker, require port mapping to expose , IP Range: 172.17.X.X), none (isolated), host(associate container with host network, host and docker isolated removed)
+docker run ubuntu  #this will be created in bridged network by default
+docker run ubuntu --network=none #container created in none network.
+docker run ubuntu --network=host #container created in host network.
+
+#create custom isolated network
+docker network  create  --driver bridge  --subnet  182.18.0.0/16   custom-isolated-network
+
+#Check docker network details
+docker inspect container_name/id #check network details of a container
+docker network ls # check network details of docker
+docker network inspect bridge # find more details about a certain network. here bridge=<network_name> , replace it with network name
+#containers can reach/resolve each other using their names, it has embedded DNS. Docker has a built-in DNS server that helps the containers to resolve each other.
+#Docker user network name spaces that creates a sperate name space for each container.
+#Then it use Virtual Ethernet Pairs to connect containers together.
+
+#Examples
+docker run -d -e MYSQL_ROOT_PASSWORD=db_pass123 --name=mysql-db --network wp-mysql-network mysql:5.6 
+docker run --network=wp-mysql-network -e DB_Host=mysql-db -e DB_Password=db_pass123 -p 38080:8080 --name webapp --link mysql-db:mysql-db -d kodekloud/simple-webapp-mysql
+
+#--------- Docker Registry---------#
+# image: docker.io/nginx/nginx
+# <registry><userAccount><image_repository>
+
+#login to private registry first always before pushing
+docker login private-registry.io
+#run the container
+docker run private-registry.io/apps/internal-app
+
+#-------Deploying on-premise private registry
+#Docker 'registry' is an application that available as a docker image
+docker run -d -p 5000:5000 --name registry registry:2
+#how do you push the image to the registry
+#first tag the image
+docker image tag my-image localhost:5000/my-image
+#push the image to local registry
+docker push localhost:5000/my-image
+#pull the image within my network/ localhost
+docker pull localhost:5000/my-image
+#if accessing another host
+docker pull 192.168.56.100:5000/my-image
+
+
+
 
 
 
