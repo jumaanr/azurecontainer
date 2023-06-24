@@ -116,6 +116,16 @@ docker  run  --entry-point   sleep2.0   ubuntu-sleeper 10 #overried the command 
 #---------- Docker Compose -----------------------
 docker compose up #create and start containers
 
+#Installing Docker Compose : https://docs.docker.com/compose/
+# Docker compose commands : https://docs.docker.com/engine/reference/commandline/compose/
+
+sudo apt update
+sudo apt install curl
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+docker-compose --version
+
+
 #----------Linking two contianers together----------
 
 $ docker run -d --name=vote -p 5000:80   --link  nameofContainer:nameofHost   voting-app  #
