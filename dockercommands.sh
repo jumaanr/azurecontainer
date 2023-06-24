@@ -75,6 +75,10 @@ docker pull ImageName # Only download/pull the image
 
 docker history ImageName #show how the image is build and sizes
 
+docker image prune -a #remove all obsolete image expect for lates
+docker image ls #see the list of images
+
+
 #--------- Docker Run -------------#
 
 # Run-STDIN interactively input standard input
@@ -191,8 +195,12 @@ docker login private-registry.io
 docker run private-registry.io/apps/internal-app
 
 #-------Deploying on-premise private registry
+
 #Docker 'registry' is an application that available as a docker image
 docker run -d -p 5000:5000 --name registry registry:2
+#Example:
+docker run -d -p 5000:5000 --restart always --name my-registry registry:2
+
 #how do you push the image to the registry
 #first tag the image
 docker image tag my-image localhost:5000/my-image
@@ -203,7 +211,7 @@ docker pull localhost:5000/my-image
 #if accessing another host
 docker pull 192.168.56.100:5000/my-image
 
-
+#------------- Docker Command Cheat Sheet Completed-------#
 
 
 
