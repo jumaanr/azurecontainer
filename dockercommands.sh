@@ -45,7 +45,7 @@ docker ps -a        # show all running, stopped, terminated(Exited) containers
 docker ps -aq       #list only container ids
 
 docker stop containerIDorName # you can give container ID or name. to stop a running contianer, can give multiple container name/ids with seperated by space
-docker stop $(docker ps -aq) # stop all containers at once
+docker stop $(docker ps -aq) # stop all containers at once, exit code 0 means killed naturally and exit code > 0 means killed forcibly
 
 docker rm containerIDorName #remove container to reclaim disk space , you can specify multiple containers with IDs
 docker rm container1 container2
