@@ -64,6 +64,7 @@ docker run -it centos bash # automatically log into docker container as it runs
 
 #---- Attach & Detach ---------------
 docker run kodekloud/simple-webapp  #container is a simple webapp, this is in attached mode. It means the console is attached to the standard out of the docker container
+#the convention here user_id/repositoryName
 docker run -d kodekloud/simple-webapp # run the container in detached mode, if image is un official kodekloud/simple-webapp it will be like this
 docker attach a043d # re attach the console to container , give container ID (first few charrachters alone)
 
