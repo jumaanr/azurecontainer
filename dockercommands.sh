@@ -209,7 +209,10 @@ docker run --network=wp-mysql-network -e DB_Host=mysql-db -e DB_Password=db_pass
 
 #--------- Docker Registry---------#
 # image: docker.io/nginx/nginx
-# <registry><userAccount><image_repository>
+# docker.io/nginx/nginx
+# <registry>/<userAccount>/<image_repository>
+
+#Example : gcr.io/kubernetes-e2e-test-images/dnsutils    : This is from Kubernetes Registry
 
 #login to private registry first always before pushing
 docker login private-registry.io
@@ -225,13 +228,20 @@ docker run -d -p 5000:5000 --restart always --name my-registry registry:2
 
 #how do you push the image to the registry
 #first tag the image
-docker image tag my-image localhost:5000/my-image
+docker image tag my-image localhost:5000/my-image # tag the image with private registry url in it, since its running on same docker host we have used localhost. Otherwise IP address
 #push the image to local registry
-docker push localhost:5000/my-image
+docker push localhost:5000/my-image  #here localhost:5000
 #pull the image within my network/ localhost
 docker pull localhost:5000/my-image
 #if accessing another host
 docker pull 192.168.56.100:5000/my-image
+
+#Check private registry repository
+curl -X GET localhost:5000/v2/_catalog
+
+# remove all the dangling images we have locally.
+docker image prune -a #remove alll images without at least one container associated
+docker image ls #check available images
 
 #------------- Docker Command Cheat Sheet Completed-------#
 
