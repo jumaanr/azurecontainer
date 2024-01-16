@@ -127,12 +127,22 @@ docker run python:3.6 cat /etc/*release*
 #------- ENV variables--------#
 docker run -e APP_COLOR=blue simple-webapp-color
 # you can pass a value to an environment vairable like above
+docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag
 
 # to check if a docker image configured with an enviornment varaible
 docker inspect blissful_hopper # under config section you can see 'ENV' configured
+docker inspect containerName_id | grep -A 5 "Env" # search for environment variables and values in 5 consecutive lines
 
 #----Commands vs Entrypoints-#
+CMD ["command","param1"] #Inside the Dockerfile makesure to enter command as of a jason array
+ENTRYPOINT["sleep"]  # the command line parameter get appended , in CMD the commandline parameters overridden
+
+#configuring a default value
+ENTRYPOINT["sleep"]
+CMD["5"]  #so the default value of CMD get appended to the entrypoint . At the start it will kick sleep 5 , unless specified
+
 docker  run  --entry-point   sleep2.0   ubuntu-sleeper 10 #overried the command at startup, here ENTRYPOINT ["sleep"] but we want to change it during runtime as sleep2.0
+#so the final command will be :  sleep2.0 10
 
 #---------- Docker Compose -----------------------
 docker compose up #create and start containers
@@ -168,6 +178,8 @@ docker run -v /data/mysql:/var/lib/mysql mysql # mount a volume from different l
 #More comprehensive bind mounting,preferred way
 docker run --mount type=bind,source=/data/mysql,target=/var/lib/mysql mysql
 
+# Docker use storage drivers to enable layered architecture
+
 #Question :What directory under /var/lib/docker are the files related to the container alpine-3 image stored?
 #Answer: The directory name is the same as the container id.
 #Here an example binding of mysql database instance , where /opt/data directory is at host end
@@ -176,11 +188,12 @@ docker run -v /opt/data:/var/lib/mysql -d --name=mysql-db -e MYSQL_ROOT_PASSWORD
 #------------ Docker Network -----------------------#
 #docker has 3 networks : bridge (private internal netwok created by docker, require port mapping to expose , IP Range: 172.17.X.X), none (isolated), host(associate container with host network, host and docker isolated removed)
 docker run ubuntu  #this will be created in bridged network by default
-docker run ubuntu --network=none #container created in none network.
-docker run ubuntu --network=host #container created in host network.
+docker run --name alpine-2 --network=none alpine #container created in none network.
+docker run --name alpine-2 --network=host alpine #container created in host network.
 
 #create custom isolated network
 docker network  create  --driver bridge  --subnet  182.18.0.0/16   custom-isolated-network
+docker network create --driver=bridge --subnet=182.18.0.1/24 --gateway=182.18.0.1 wp-mysql-network
 
 #Check docker network details
 docker inspect container_name/id #check network details of a container
