@@ -32,7 +32,9 @@ sudo docker run docker/whalesay cowsay Hello-World!
 
 docker run nginx    #runs an docker nginx container, if the image is not available locally it will pull the image from dockerhub, same image will be reused
 docker run  --name webapp nginx:1.14-alpine  # define a custom name for container
-docker run redis:4.0  #specify a tag which is a specific version of redis image, if not specified the default tag = latest applied
+
+docker run ubuntu:17.10  # Appending a tag, where we run a different version of Ubuntu than running the default
+docker run redis:4.0  #specify a Tag which is a specific version of redis image, if not specified the default tag = latest applied
 
 #Run a container in a remote docker host/engine
 docker -H=10.123.2.1:2375 run nginx #using IP 
@@ -58,7 +60,10 @@ docker run ubuntu
 
 #-------- Command Execution ----------#
 docker run ubuntu sleep 5 # Execute a command when we run a container
+docker run ubuntu cat /etc/*release* # Here executes a command with multiple aruments
+
 docker exec ContainerName cat /etc/hosts # Execute a command in a running container
+docker exec -it containerID /bin/bash #Attach a terminal to already running container
 
 docker run -it centos bash # automatically log into docker container as it runs
 
@@ -102,11 +107,14 @@ docker logs <containerName|containerID> #get logs of a container that ran in bac
 docker logs blissful_hopper
 
 #--------- Building Custom Docker Images using Docker File -------------#
-docker build Dockerfile -t mummshad/my-custom-app  #build your own image using Dockerfile , -t for tag name | this will create an image locally in your system
+docker build Dockerfile -t mummshad/my-custom-app:lite  #build your own image using Dockerfile , -t for tag name | this will create an image locally in your system : here tage is 'lite'
 docker build Dockerfile2 -t mummshad/my-custom-app2
+docker build . -t mumshad/my-simple-webapp #build from the docker file available in current location. Here also we tag it . 
 
 docker build . #see the various steps involved and the result of each task
 $ docker build -t webapp-color . #At the end of the command, we used the "." (dot) symbol which indicates for the current directory, so you need to run this command from within the directory that has the Dockerfile.
+
+docker history mumshad/my-custom-app # To see the docker build information, how the layered architecture has been formed
 
 docker login #login to your user account before you publish
 docker push mummshad/my-custom-app  #make it available in public docker registry, <accountName>/<ImageName>

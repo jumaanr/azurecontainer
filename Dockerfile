@@ -9,6 +9,7 @@ RUN apt-get update
 
 #Install dependencies using pip
 RUN apt-get install python
+RUN apt get install python-pip
   
 #Install Python dependencies using pip
 RUN pip install flask
